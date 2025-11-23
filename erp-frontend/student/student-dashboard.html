@@ -73,35 +73,36 @@
 <script>
   
 const token = localStorage.getItem("token");
+
+// अगर token नहीं है तो login page पर redirect
+if(!token){
+  alert('Please login first!');
+  window.location.href='../login.html';
+}
+
 async function loadStudentInfo(){
   try {
     const res = await fetch("http://localhost:5000/api/student/profile", {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
-    if(data.success){
+
+    if(data.success && data.student){
       document.getElementById("studentName").textContent = data.student.name;
       document.getElementById("studentRoll").textContent = data.student.rollNo;
     } else {
-      document.getElementById("studentName").textContent = "Shubham Srivastava";
-      document.getElementById("studentRoll").textContent = "2200460100105";
+      // fallback generic values
+      document.getElementById("studentName").textContent = "--";
+      document.getElementById("studentRoll").textContent = "--";
     }
   } catch(err){
     console.error("Error loading student info:", err);
-    // fallback hardcoded
-    document.getElementById("studentName").textContent = "Shubham Srivastava";
-    document.getElementById("studentRoll").textContent = "2200460100105";
+    document.getElementById("studentName").textContent = "--";
+    document.getElementById("studentRoll").textContent = "--";
   }
 }
 
 loadStudentInfo();
-
-
-
-if(!token){
-  alert('Please login first!');
-  window.location.href='../login.html';
-}
 
 // Attendance card
 async function loadAttendance(){
